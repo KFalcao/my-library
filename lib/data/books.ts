@@ -1,19 +1,8 @@
-export type Book = {
-  id: string;
-  title: string;
-  author: string;
-  genre: string;
-  year: number;
-  pages: number;
-  rating: number;
-  synopsis: string;
-  cover: string;
-  status: "QUERO_LER" | "LENDO" | "LIDO" | "PAUSADO" | "ABANDONADO";
-};
+import { Book } from "@/app/types/book";
 
-export const books = [
+let books: Book[] = [
   {
-    id: "1",
+    id: 1,
     title: "Dom Casmurro",
     author: "Machado de Assis",
     genre: "Literatura Brasileira",
@@ -26,7 +15,7 @@ export const books = [
     status: "LIDO",
   },
   {
-    id: "2",
+    id: 2,
     title: "Duna",
     author: "Frank Herbert",
     genre: "Ficção Científica",
@@ -39,7 +28,7 @@ export const books = [
     status: "LENDO",
   },
   {
-    id: "3",
+    id: 3,
     title: "O Nome do Vento",
     author: "Patrick Rothfuss",
     genre: "Fantasia",
@@ -48,11 +37,12 @@ export const books = [
     rating: 5,
     synopsis:
       "Kvothe narra sua própria história: sua infância em uma trupe, seus anos como órfão e seus estudos na Universidade.",
-    cover: "https://m.media-amazon.com/images/I/81CGmkRG9GL._UF1000,1000_QL80_.jpg",
+    cover:
+      "https://m.media-amazon.com/images/I/81CGmkRG9GL._UF1000,1000_QL80_.jpg",
     status: "QUERO_LER",
   },
   {
-    id: "4",
+    id: 4,
     title: "Sapiens: Uma Breve História da Humanidade",
     author: "Yuval Noah Harari",
     genre: "História",
@@ -65,7 +55,7 @@ export const books = [
     status: "LENDO",
   },
   {
-    id: "5",
+    id: 5,
     title: "Clean Code",
     author: "Robert C. Martin",
     genre: "Programação",
@@ -79,7 +69,7 @@ export const books = [
     status: "PAUSADO",
   },
   {
-    id: "6",
+    id: 6,
     title: "1984",
     author: "George Orwell",
     genre: "Distopia",
@@ -92,7 +82,7 @@ export const books = [
     status: "LIDO",
   },
   {
-    id: "7",
+    id: 7,
     title: "O Temor do Sábio",
     author: "Patrick Rothfuss",
     genre: "Fantasia",
@@ -101,11 +91,12 @@ export const books = [
     rating: 0,
     synopsis:
       "Continuação da história de Kvothe, onde ele enfrenta desafios ainda maiores na Universidade e além.",
-    cover: "https://m.media-amazon.com/images/I/91rGGj7JBhL._UF1000,1000_QL80_.jpg",
+    cover:
+      "https://m.media-amazon.com/images/I/91rGGj7JBhL._UF1000,1000_QL80_.jpg",
     status: "QUERO_LER",
   },
   {
-    id: "8",
+    id: 8,
     title: "O Pequeno Príncipe",
     author: "Antoine de Saint-Exupéry",
     genre: "Literatura Infantil",
@@ -114,7 +105,38 @@ export const books = [
     rating: 5,
     synopsis:
       "Uma fábula poética e filosófica sobre amizade, amor e a essência da vida, através dos olhos de uma criança.",
-    cover: "https://m.media-amazon.com/images/I/81SVIwe5L9L._UF1000,1000_QL80_.jpg",
+    cover:
+      "https://m.media-amazon.com/images/I/81SVIwe5L9L._UF1000,1000_QL80_.jpg",
     status: "ABANDONADO",
   },
 ];
+
+// Função para gerar IDs únicos
+function generateId(): number {
+  return Date.now();
+}
+
+// Funções para manipular os dados
+export const booksData = {
+  // Buscar books
+  getAll: (): Book[] => {
+    return books;
+  },
+
+  // Buscar book por ID
+  getById: (id: number): Book | undefined => {
+    return books.find((book) => book.id === id);
+  },
+
+  // Deletar book
+  delete: (id: number): boolean => {
+    const bookIndex = books.findIndex((book) => book.id === id);
+
+    if (bookIndex === -1) {
+      return false;
+    }
+
+    books.splice(bookIndex, 1);
+    return true;
+  },
+};
