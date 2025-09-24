@@ -1,3 +1,16 @@
+export type Book = {
+  id: string;
+  title: string;
+  author: string;
+  genre: string;
+  year: number;
+  pages: number;
+  rating: number;
+  synopsis: string;
+  cover: string;
+  status: "QUERO_LER" | "LENDO" | "LIDO" | "PAUSADO" | "ABANDONADO";
+};
+
 export const books = [
   {
     id: "1",
@@ -22,7 +35,7 @@ export const books = [
     rating: 4,
     synopsis:
       "Um épico de ficção científica sobre política, religião e ecologia em Arrakis, o planeta desértico.",
-    cover: "https://m.media-amazon.com/images/I/91+NBrN0YPL.jpg",
+    cover: "https://m.media-amazon.com/images/I/81zN7udGRUL.jpg",
     status: "LENDO",
   },
   {
@@ -35,7 +48,7 @@ export const books = [
     rating: 5,
     synopsis:
       "Kvothe narra sua própria história: sua infância em uma trupe, seus anos como órfão e seus estudos na Universidade.",
-    cover: "https://m.media-amazon.com/images/I/81R1rOZ7GCL.jpg",
+    cover: "https://m.media-amazon.com/images/I/81CGmkRG9GL._UF1000,1000_QL80_.jpg",
     status: "QUERO_LER",
   },
   {
@@ -48,7 +61,7 @@ export const books = [
     rating: 4,
     synopsis:
       "Uma exploração sobre como o Homo sapiens dominou o mundo e moldou sociedades, culturas e economias.",
-    cover: "https://m.media-amazon.com/images/I/71N4oeWwYlL.jpg",
+    cover: "https://www.lpm.com.br/livros/imagens/sapiens_9788525438393_hd.jpg",
     status: "LENDO",
   },
   {
@@ -88,7 +101,7 @@ export const books = [
     rating: 0,
     synopsis:
       "Continuação da história de Kvothe, onde ele enfrenta desafios ainda maiores na Universidade e além.",
-    cover: "https://m.media-amazon.com/images/I/81M3gRZPURL.jpg",
+    cover: "https://m.media-amazon.com/images/I/91rGGj7JBhL._UF1000,1000_QL80_.jpg",
     status: "QUERO_LER",
   },
   {
@@ -101,7 +114,7 @@ export const books = [
     rating: 5,
     synopsis:
       "Uma fábula poética e filosófica sobre amizade, amor e a essência da vida, através dos olhos de uma criança.",
-    cover: "https://m.media-amazon.com/images/I/71u3uXQ5M6L.jpg",
+    cover: "https://m.media-amazon.com/images/I/81SVIwe5L9L._UF1000,1000_QL80_.jpg",
     status: "ABANDONADO",
   },
 ];
