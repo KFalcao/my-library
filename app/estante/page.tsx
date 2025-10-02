@@ -38,6 +38,9 @@ export default function LibraryPage() {
     setBooks(books.filter((b) => b.id !== id));
   };
 
+  const truncate = (text: string, length: number) =>
+    text.length > length ? text.slice(0, length) + "..." : text;
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -84,7 +87,7 @@ export default function LibraryPage() {
       {/* Grid de livros */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {filteredBooks.map((book) => (
-          <Card key={book.id} className="shadow-lg hover:shadow-xl transition">
+          <Card key={book.id} className="shadow-lg hover:shadow-xl transition flex flex-col">
             <CardHeader className="p-0">
               <img
                 src={book.cover || "/default-cover.png"}
@@ -92,19 +95,28 @@ export default function LibraryPage() {
                 className="w-full h-60 object-contain rounded-t-xl"
               />
             </CardHeader>
-            <CardContent className="p-4 space-y-2">
+            <CardContent className="p-4 space-y-2 flex-1">
               <h2 className="text-lg font-semibold">{book.title}</h2>
               <p className="text-sm text-muted-foreground">{book.author}</p>
               <p className="text-xs text-gray-500">
                 {book.year} • {book.genre} • {book.status?.replace("_", " ")}
               </p>
-              <div className="flex">
+              <p className="text-gray-600 text-sm mt-2">
+                {truncate(book.synopsis || "Nenhuma sinopse cadastrada.", 100)}
+              </p>
+              <div className="flex mt-2">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className={`h-4 w-4 ${i < (book.rating ?? 0) ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}`} />
+                  <Star
+                    key={i}
+                    className={`h-4 w-4 ${
+                      i < (book.rating ?? 0) ? "text-yellow-500 fill-yellow-500" : "text-gray-300"
+                    }`}
+                  />
                 ))}
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">
+              <Button size="sm" onClick={() => router.push(`/estante/${book.id}`)}>Visualizar</Button>
               <Button variant="outline" size="sm" onClick={() => router.push(`/estante/${book.id}/edit`)}>Editar</Button>
               <Button variant="destructive" size="sm" onClick={() => handleDelete(book.id)}>Excluir</Button>
             </CardFooter>

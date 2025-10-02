@@ -5,21 +5,21 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function BookDetailPage() {
-  const params = useParams();
+  const { id } = useParams();
   const router = useRouter();
   const [book, setBook] = useState<Book | null>(null);
 
   useEffect(() => {
-    if (params.id) {
-      db.books.get(params.id).then((data) => {
+    if (id) {
+      db.books.get(id as string).then((data) => {
         if (data) setBook(data);
       });
     }
-  }, [params.id]);
+  }, [id]);
 
   const handleDelete = async () => {
-    if (!params.id) return;
-    await db.books.delete(params.id);
+    if (!id) return;
+    await db.books.delete(id);
     router.push("/estante");
   };
 
@@ -36,23 +36,40 @@ export default function BookDetailPage() {
         />
 
         <h1 className="text-3xl font-bold mb-2">{book.title}</h1>
-        <p className="text-lg text-gray-700 mb-1"><strong>Autor:</strong> {book.author}</p>
-        <p className="text-lg text-gray-700 mb-1"><strong>Gênero:</strong> {book.genre || "Não informado"}</p>
-        {book.year && <p className="text-lg text-gray-700 mb-1"><strong>Ano:</strong> {book.year}</p>}
-        {book.pages && <p className="text-lg text-gray-700 mb-1"><strong>Páginas:</strong> {book.pages}</p>}
-        {book.rating !== undefined && (
+        <p className="text-lg text-gray-700 mb-1">
+          <strong>Autor:</strong> {book.author}
+        </p>
+        <p className="text-lg text-gray-700 mb-1">
+          <strong>Gênero:</strong> {book.genre || "Não informado"}
+        </p>
+        {book.year && (
           <p className="text-lg text-gray-700 mb-1">
-            <strong>Avaliação:</strong> {book.rating > 0 ? `${book.rating}/5` : "Ainda não avaliado"}
+            <strong>Ano:</strong> {book.year}
           </p>
         )}
-        <p className="text-lg text-gray-700 mb-1"><strong>Status:</strong> {book.status}</p>
+        {book.pages && (
+          <p className="text-lg text-gray-700 mb-1">
+            <strong>Páginas:</strong> {book.pages}
+          </p>
+        )}
+        {book.rating !== undefined && (
+          <p className="text-lg text-gray-700 mb-1">
+            <strong>Avaliação:</strong>{" "}
+            {book.rating > 0 ? `${book.rating}/5` : "Ainda não avaliado"}
+          </p>
+        )}
+        <p className="text-lg text-gray-700 mb-1">
+          <strong>Status:</strong> {book.status}
+        </p>
 
         <h2 className="text-2xl font-semibold mt-4 mb-2">Sinopse</h2>
-        <p className="text-gray-600 mb-6">{book.synopsis || "Nenhuma sinopse cadastrada."}</p>
+        <p className="text-gray-600 mb-6">
+          {book.synopsis || "Nenhuma sinopse cadastrada."}
+        </p>
 
         <div className="flex gap-4">
           <button
-            onClick={() => router.push(`/estante/${book.id}/edit`)}
+            onClick={() => router.push(`/(library)/${book.id}/edit`)}
             className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
           >
             Editar
