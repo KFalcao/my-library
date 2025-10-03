@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Book } from "../types/book";
+import { booksData } from "@/lib/data/books";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -12,8 +15,10 @@ import {
 } from "@/components/ui/select";
 import BookItem from "../components/BookItem";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function LibraryPage() {
+  const [books, setBooks] = useState<Book[]>([]);
   const [search, setSearch] = useState("");
   const [genre, setGenre] = useState("all");
   const [books, setBooks] = useState<Book[]>([]);
@@ -66,6 +71,14 @@ export default function LibraryPage() {
 
   // Carregar todos na montagem do componente
   useEffect(() => {
+  const [status, setStatus] = useState("all");
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      const all = await db.books.toArray();
+      setBooks(all);
+    };
     fetchBooks();
   }, []);
 
@@ -73,15 +86,25 @@ export default function LibraryPage() {
     const matchesSearch =
       book.title.toLowerCase().includes(search.toLowerCase()) ||
       book.author.toLowerCase().includes(search.toLowerCase());
-
     const matchesGenre = genre === "all" || book.genre === genre;
-
-    return matchesSearch && matchesGenre;
+    const matchesStatus = status === "all" || book.status === status;
+    return matchesSearch && matchesGenre && matchesStatus;
   });
+
+  const handleDelete = async (id: string) => {
+    await db.books.delete(id);
+    setBooks(books.filter((b) => b.id !== id));
+  };
+
+  const truncate = (text: string, length: number) =>
+    text.length > length ? text.slice(0, length) + "..." : text;
 
   return (
     <div className="p-6 mx-10 space-y-6">
-      <h1 className="text-2xl font-bold">My Library</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">📚 Minha Biblioteca</h1>
+        <Button onClick={() => router.push("/estante/add")}>Adicionar Livro</Button>
+      </div>
 
       {/* Filtros */}
       <div className="flex flex-col md:flex-row gap-4">
@@ -89,7 +112,7 @@ export default function LibraryPage() {
           placeholder="Buscar por título ou autor..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="md:w-1/2"
+          className="md:w-1/3"
         />
 
         <Select onValueChange={setGenre} defaultValue="all">
@@ -98,18 +121,28 @@ export default function LibraryPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os gêneros</SelectItem>
-            <SelectItem value="Literatura Brasileira">
-              Literatura Brasileira
-            </SelectItem>
-            <SelectItem value="Ficção Científica">Ficção Científica</SelectItem>
-            <SelectItem value="Fantasia">Fantasia</SelectItem>
-            <SelectItem value="História">História</SelectItem>
-            <SelectItem value="Programação">Programação</SelectItem>
+            {["Literatura Brasileira","Ficção Científica","Fantasia","História","Programação"].map((g) => (
+              <SelectItem key={g} value={g}>{g}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select onValueChange={setStatus} defaultValue="all">
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Filtrar por status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os status</SelectItem>
+            <SelectItem value="QUERO_LER">Quero Ler</SelectItem>
+            <SelectItem value="LENDO">Lendo</SelectItem>
+            <SelectItem value="LIDO">Lido</SelectItem>
+            <SelectItem value="PAUSADO">Pausado</SelectItem>
+            <SelectItem value="ABANDONADO">Abandonado</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
-      {/* Grid de Livros */}
+      {/* Grid de livros */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {filteredBooks.map((book) => (
           <BookItem
