@@ -96,6 +96,9 @@ export default function LibraryPage() {
     setBooks(books.filter((b) => b.id !== id));
   };
 
+  const truncate = (text: string, length: number) =>
+    text.length > length ? text.slice(0, length) + "..." : text;
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
