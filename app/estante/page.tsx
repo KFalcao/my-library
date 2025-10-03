@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Book } from "../types/book";
-import { booksData } from "@/lib/data/books";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -82,8 +80,8 @@ export default function LibraryPage() {
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">📚 Minha Biblioteca</h1>
+    <div className="p-6 mx-10 space-y-6">
+      <h1 className="text-2xl font-bold">My Library</h1>
 
       {/* Filtros */}
       <div className="flex flex-col md:flex-row gap-4">
