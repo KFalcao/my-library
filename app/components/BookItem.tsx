@@ -56,10 +56,10 @@ export default function BookItem({
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-700 shadow-lg transition-all hover:bg-white hover:scale-110 hover:text-red-500">
+                <button className="flex h-8 w-8 items-center justify-center rounded-full bg-background text-primary shadow-lg transition-all hover:bg-background hover:scale-110 hover:text-destructive">
                   <Trash
                     size={18}
-                    className="text-slate-600 hover:text-red-400 transition cursor-pointer"
+                    className="text-muted-foreground hover:text-destructive transition cursor-pointer"
                   />
                 </button>
               </AlertDialogTrigger>
