@@ -1,18 +1,76 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { Book } from "../types/book";
+import { booksData } from "@/lib/data/books";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Book, db } from "@/lib/data/db";
-import { Star } from "lucide-react";
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from "@/components/ui/select";
+import BookItem from "../components/BookItem";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 export default function LibraryPage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [search, setSearch] = useState("");
   const [genre, setGenre] = useState("all");
+  const [books, setBooks] = useState<Book[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [actionLoading, setActionLoading] = useState<number | null>(null);
+
+  const fetchBooks = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch("/api/books");
+      const result = await response.json();
+
+      if (result.success) {
+        setBooks(result.data);
+      } else {
+        setError(result.error || "Failed to fetch books");
+      }
+    } catch (err) {
+      setError("Connection error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteBook = async (id: number) => {
+    try {
+      setActionLoading(id);
+
+      const response = await fetch(`/api/books/${id}`, {
+        method: "DELETE",
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setBooks((prev) => prev.filter((b) => b.id !== id));
+        toast.warning("Book deleted successfully");
+      } else {
+        setError(result.error || "Failed to delete book");
+      }
+    } catch (error) {
+      setError("Connection error");
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  // Carregar todos na montagem do componente
+  useEffect(() => {
   const [status, setStatus] = useState("all");
   const router = useRouter();
 
@@ -84,33 +142,17 @@ export default function LibraryPage() {
       {/* Grid de livros */}
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {filteredBooks.map((book) => (
-          <Card key={book.id} className="shadow-lg hover:shadow-xl transition">
-            <CardHeader className="p-0">
-              <img
-                src={book.cover || "/default-cover.png"}
-                alt={book.title}
-                className="w-full h-60 object-contain rounded-t-xl"
-              />
-            </CardHeader>
-            <CardContent className="p-4 space-y-2">
-              <h2 className="text-lg font-semibold">{book.title}</h2>
-              <p className="text-sm text-muted-foreground">{book.author}</p>
-              <p className="text-xs text-gray-500">
-                {book.year} • {book.genre} • {book.status?.replace("_", " ")}
-              </p>
-              <div className="flex">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star key={i} className={`h-4 w-4 ${i < (book.rating ?? 0) ? "text-yellow-500 fill-yellow-500" : "text-gray-300"}`} />
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" size="sm" onClick={() => router.push(`/estante/${book.id}/edit`)}>Editar</Button>
-              <Button variant="destructive" size="sm" onClick={() => handleDelete(book.id)}>Excluir</Button>
-            </CardFooter>
-          </Card>
+          <BookItem
+            key={book.id}
+            book={book}
+            onDelete={deleteBook}
+            isLoading={actionLoading === book.id}
+          />
         ))}
       </div>
+
+      {loading && <div>Carregando livros...</div>}
+      {error && <div className="text-red-500">{error}</div>}
     </div>
   );
 }
