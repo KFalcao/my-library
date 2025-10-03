@@ -100,7 +100,7 @@ export default function LibraryPage() {
     text.length > length ? text.slice(0, length) + "..." : text;
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 mx-10 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">📚 Minha Biblioteca</h1>
         <Button onClick={() => router.push("/estante/add")}>Adicionar Livro</Button>
