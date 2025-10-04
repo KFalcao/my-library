@@ -7,7 +7,7 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Book } from "../types/book";
-import { Info, Star, Trash } from "lucide-react";
+import { Star, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -20,8 +20,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { useState } from "react";
 
 interface BookItemProps {
   book: Book;
@@ -34,8 +32,6 @@ export default function BookItem({
   onDelete,
   isLoading = false,
 }: BookItemProps) {
-  const [hovered, setHovered] = useState(false);
-
   return (
     <Card key={book.id} className="shadow-lg hover:shadow-xl transition">
       <CardHeader className="p-0">

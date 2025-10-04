@@ -1,3 +1,10 @@
+export type ReadingStatus =
+  | "QUERO LER"
+  | "LENDO"
+  | "LIDO"
+  | "PAUSADO"
+  | "ABANDONADO";
+
 export type Book = {
   id: number;
   title: string;
@@ -8,5 +15,6 @@ export type Book = {
   rating: number;
   synopsis: string;
   cover: string;
-  status: "QUERO_LER" | "LENDO" | "LIDO" | "PAUSADO" | "ABANDONADO";
+  status: ReadingStatus;
+  currentPage?: number;
 };
