@@ -20,6 +20,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { DialogClose } from "@radix-ui/react-dialog";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { truncate } from "@/lib/utils";
+
 
 interface BookItemProps {
   book: Book;
@@ -32,22 +37,29 @@ export default function BookItem({
   onDelete,
   isLoading = false,
 }: BookItemProps) {
+  const [hovered, setHovered] = useState(false);
+  const router = useRouter();
+
+  function handleDelete(id: number): void {
+    onDelete(id);
+  }
+
   return (
     <Card key={book.id} className="shadow-lg hover:shadow-xl transition">
       <CardHeader className="p-0">
         <div className="relative group">
           <img
-            src={book.cover}
+            src={book.cover || "/default-cover.png"}
             alt={book.title}
             className="w-full h-60 object-contain rounded-t-xl group-hover:brightness-25 transition"
           />
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <button className="flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-slate-700 shadow-lg transition-all hover:bg-white hover:scale-110 hover:text-red-500">
+                <button className="flex h-8 w-8 items-center justify-center rounded-full bg-background text-primary shadow-lg transition-all hover:bg-background hover:scale-110 hover:text-destructive">
                   <Trash
                     size={18}
-                    className="text-slate-600 hover:text-red-400 transition cursor-pointer"
+                    className="text-muted-foreground hover:text-destructive transition cursor-pointer"
                   />
                 </button>
               </AlertDialogTrigger>
@@ -78,9 +90,12 @@ export default function BookItem({
       <CardContent className="p-4 space-y-2">
         <h2 className="text-lg font-semibold">{book.title}</h2>
         <p className="text-sm text-muted-foreground">{book.author}</p>
-        <p className="text-xs text-gray-500">
-          {book.year} • {book.genre}
+        <p className="text-xs text-muted-foreground">
+          {book.year} • {book.genre} • {book.status?.replace("_", " ")}
         </p>
+        <p className="text-muted-foreground text-sm mt-2">
+          {truncate(book.synopsis || "Nenhuma sinopse cadastrada.", 100)}
+          </p>
 
         {/* Avaliação por estrelas */}
         <div className="flex">
@@ -96,14 +111,11 @@ export default function BookItem({
           ))}
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
-        <Button variant="outline" size="sm">
-          Ver
-        </Button>
-        <Button variant="outline" size="sm">
-          Editar
-        </Button>
-      </CardFooter>
+       <CardFooter className="flex justify-between">
+              <Button size="sm" onClick={() => router.push(`/estante/${book.id}`)}>Visualizar</Button>
+              <Button variant="outline" size="sm" onClick={() => router.push(`/estante/${book.id}/edit`)}>Editar</Button>
+              <Button variant="destructive" size="sm" onClick={() => handleDelete(book.id)}>Excluir</Button>
+        </CardFooter>
     </Card>
   );
 }
