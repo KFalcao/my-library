@@ -21,10 +21,12 @@ export default function LibraryPage() {
   const [books, setBooks] = useState<Book[]>([]);
   const [search, setSearch] = useState("");
   const [genre, setGenre] = useState("all");
-  const [books, setBooks] = useState<Book[]>([]);
+  const [status, setStatus] = useState("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
+
+  const router = useRouter();
 
   const fetchBooks = async () => {
     try {
@@ -45,6 +47,10 @@ export default function LibraryPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBooks();
+  }, []);
 
   const deleteBook = async (id: number) => {
     try {
@@ -69,19 +75,6 @@ export default function LibraryPage() {
     }
   };
 
-  // Carregar todos na montagem do componente
-  useEffect(() => {
-  const [status, setStatus] = useState("all");
-  const router = useRouter();
-
-  useEffect(() => {
-    const fetchBooks = async () => {
-      const all = await db.books.toArray();
-      setBooks(all);
-    };
-    fetchBooks();
-  }, []);
-
   const filteredBooks = books.filter((book) => {
     const matchesSearch =
       book.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -90,11 +83,6 @@ export default function LibraryPage() {
     const matchesStatus = status === "all" || book.status === status;
     return matchesSearch && matchesGenre && matchesStatus;
   });
-
-  const handleDelete = async (id: string) => {
-    await db.books.delete(id);
-    setBooks(books.filter((b) => b.id !== id));
-  };
 
   const truncate = (text: string, length: number) =>
     text.length > length ? text.slice(0, length) + "..." : text;
