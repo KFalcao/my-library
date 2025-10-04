@@ -1,4 +1,4 @@
-import { Book } from "@/app/types/book";
+import type { Book } from "@/app/types/book";
 
 let books: Book[] = [
   {
@@ -13,6 +13,7 @@ let books: Book[] = [
       "A clássica história de Bentinho e Capitu, explorando ciúmes, amor e a dúvida eterna sobre a traição.",
     cover: "https://m.media-amazon.com/images/I/81a4kCNuH+L.jpg",
     status: "LIDO",
+    currentPage: 256,
   },
   {
     id: 2,
@@ -26,6 +27,7 @@ let books: Book[] = [
       "Um épico de ficção científica sobre política, religião e ecologia em Arrakis, o planeta desértico.",
     cover: "https://m.media-amazon.com/images/I/81zN7udGRUL.jpg",
     status: "LENDO",
+    currentPage: 190,
   },
   {
     id: 3,
@@ -39,7 +41,7 @@ let books: Book[] = [
       "Kvothe narra sua própria história: sua infância em uma trupe, seus anos como órfão e seus estudos na Universidade.",
     cover:
       "https://m.media-amazon.com/images/I/81CGmkRG9GL._UF1000,1000_QL80_.jpg",
-    status: "QUERO_LER",
+    status: "QUERO LER",
   },
   {
     id: 4,
@@ -53,6 +55,7 @@ let books: Book[] = [
       "Uma exploração sobre como o Homo sapiens dominou o mundo e moldou sociedades, culturas e economias.",
     cover: "https://www.lpm.com.br/livros/imagens/sapiens_9788525438393_hd.jpg",
     status: "LENDO",
+    currentPage: 320,
   },
   {
     id: 5,
@@ -80,6 +83,7 @@ let books: Book[] = [
       "Um clássico da ficção distópica sobre vigilância governamental, controle de informação e manipulação da verdade.",
     cover: "https://m.media-amazon.com/images/I/71kxa1-0mfL.jpg",
     status: "LIDO",
+    currentPage: 328,
   },
   {
     id: 7,
