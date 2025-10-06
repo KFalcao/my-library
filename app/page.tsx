@@ -1,4 +1,3 @@
-import { cn } from "@/lib/utils";
 import Hero from "./components/Hero";
 
 export default function Home() {

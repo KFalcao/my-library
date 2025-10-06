@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Book } from "../types/book";
-import { booksData } from "@/lib/data/books";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -90,7 +88,7 @@ export default function LibraryPage() {
   return (
     <div className="p-6 mx-10 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">📚 Minha Biblioteca</h1>
+        <h1 className="text-2xl font-bold">📖 Minha Biblioteca</h1>
         <Button onClick={() => router.push("/estante/add")}>Adicionar Livro</Button>
       </div>
 
@@ -143,7 +141,7 @@ export default function LibraryPage() {
       </div>
 
       {loading && <div>Carregando livros...</div>}
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-destructive">{error}</div>}
     </div>
   );
 }
