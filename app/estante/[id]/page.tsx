@@ -1,29 +1,37 @@
 "use client";
 
-import { Book, db } from "@/lib/data/db";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import type { Book } from "@/app/types/book";
 
 export default function BookDetailPage() {
   const params = useParams();
   const router = useRouter();
   const [book, setBook] = useState<Book | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (params.id) {
-      db.books.get(params.id).then((data) => {
-        if (data) setBook(data);
-      });
+      fetch(`https://mylibraryapi.up.railway.app/books/${params.id}`)
+        .then((res) => res.ok ? res.json() : null)
+        .then((data) => {
+          setBook(data);
+          setLoading(false);
+        })
+        .catch(() => setLoading(false));
     }
   }, [params.id]);
 
   const handleDelete = async () => {
     if (!params.id) return;
-    await db.books.delete(params.id);
+    await fetch(`https://mylibraryapi.up.railway.app/books/${params.id}`, {
+      method: "DELETE",
+    });
     router.push("/estante");
   };
 
-  if (!book) return <p className="p-6 text-center">Carregando livro...</p>;
+  if (loading) return <p className="p-6 text-center">Carregando livro...</p>;
+  if (!book) return <p className="p-6 text-center">Livro não encontrado.</p>;
 
   return (
     <div className="max-w-3xl mx-auto p-6">

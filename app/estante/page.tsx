@@ -2,9 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Book } from "../types/book";
-import { booksData } from "@/lib/data/books";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -13,7 +11,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import BookItem from "../components/BookItem";
+import BookItem from "@/components/BookItem";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
@@ -33,8 +31,8 @@ export default function LibraryPage() {
       setLoading(true);
       setError(null);
 
-      const response = await fetch("/api/books");
-      const result = await response.json();
+      const API_URL = process.env.NEXT_PUBLIC_API_URL
+      const result = await fetch(`${API_URL}/books`).then((res) => res.json());
 
       if (result.success) {
         setBooks(result.data);
@@ -56,7 +54,7 @@ export default function LibraryPage() {
     try {
       setActionLoading(id);
 
-      const response = await fetch(`/api/books/${id}`, {
+      const response = await fetch(`/api/books/${id}`, {// await fetch(`${API_URL}/books/${id}`
         method: "DELETE",
       });
 

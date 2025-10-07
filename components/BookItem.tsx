@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
 } from "@/components/ui/card";
-import { Book } from "../types/book";
+import type { Book } from "@/app/types/book";
 import { Star, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +20,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { DialogClose } from "@radix-ui/react-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { truncate } from "@/lib/utils";

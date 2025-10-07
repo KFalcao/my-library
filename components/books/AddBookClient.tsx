@@ -3,36 +3,56 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Book, BookStatus, db, GENRES } from "@/lib/data/db";
+import type { Book, ReadingStatus } from "@/app/types/book";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useState, useEffect } from "react";
 
 export default function AddBookClient() {
-  const [book, setBook] = useState<Book>({
-    id: uuidv4(),
+  const [book, setBook] = useState<Omit<Book, "id">>({
     title: "",
     author: "",
     genre: "",
-    year: undefined,
-    pages: undefined,
-    rating: undefined,
+    year: 0,
+    pages: 0,
+    rating: 0,
     synopsis: "",
     cover: "",
-    status: "QUERO_LER",
+    status: "QUERO LER",
+    currentPage: 0,
   });
+  const [genres, setGenres] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    // Busca os gêneros da API ao montar o componente
+    fetch("/api/genres")
+      .then((res) => res.json())
+      .then((data) => setGenres(data))
+      .catch(() => setGenres([]));
+  }, []);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    await db.books.add(book);
-    router.push("/estante");
-  };
+    setLoading(true);
+    try {
+      await fetch("/api/books", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(book),
+      });
+      router.push("/estante");
+    } catch (err) {
+      alert("Erro ao adicionar livro.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Adicionar Novo Livro</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Campos de entrada */}
           <div>
@@ -47,7 +67,13 @@ export default function AddBookClient() {
             <label className="block text-sm font-medium mb-1">Gênero</label>
             <Select value={book.genre} onValueChange={(val) => setBook({ ...book, genre: val })}>
               <SelectTrigger><SelectValue placeholder="Selecione o gênero" /></SelectTrigger>
-              <SelectContent>{GENRES.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)}</SelectContent>
+              <SelectContent>
+                {genres.length === 0 ? (
+                  <SelectItem value="" disabled>Carregando...</SelectItem>
+                ) : (
+                  genres.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)
+                )}
+              </SelectContent>
             </Select>
           </div>
           <div>
@@ -68,10 +94,10 @@ export default function AddBookClient() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Status de leitura</label>
-            <Select value={book.status} onValueChange={(val) => setBook({ ...book, status: val as BookStatus })}>
+            <Select value={book.status} onValueChange={(val) => setBook({ ...book, status: val as ReadingStatus })}>
               <SelectTrigger><SelectValue placeholder="Selecione o status" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="QUERO_LER">Quero Ler</SelectItem>
+                <SelectItem value="QUERO LER">Quero Ler</SelectItem>
                 <SelectItem value="LENDO">Lendo</SelectItem>
                 <SelectItem value="LIDO">Lido</SelectItem>
                 <SelectItem value="PAUSADO">Pausado</SelectItem>
@@ -92,8 +118,8 @@ export default function AddBookClient() {
         </div>
 
         <div className="flex gap-4">
-          <Button type="submit">Adicionar</Button>
-          <Button variant="outline" onClick={() => router.push("/estante")}>Cancelar</Button>
+          <Button type="submit" disabled={loading}>{loading ? "Adicionando..." : "Adicionar"}</Button>
+          <Button variant="outline" type="button" onClick={() => router.push("/estante")}>Cancelar</Button>
         </div>
       </form>
     </div>
