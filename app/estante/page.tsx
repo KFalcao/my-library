@@ -14,6 +14,8 @@ import {
 import BookItem from "@/components/BookItem";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Plus } from "lucide-react";
+
 
 
 export default function LibraryPage() {
@@ -67,14 +69,21 @@ export default function LibraryPage() {
         method: "DELETE",
       });
 
-      setBooks((prev) => prev.filter((b) => b.id !== id));
-      toast.warning("Book deleted successfully");
+      const result = await fetch("/api/books").then((res) => res.json());
+
+       if (result.success) {
+        setBooks((prev) => prev.filter((b) => b.id !== id));
+        toast.warning("Book deleted successfully");
+      } else {
+        setError(result.error || "Failed to delete book");
+      }
     } catch (error) {
       setError("Connection error");
     } finally {
       setActionLoading(null);
     }
   };
+
 
   const filteredBooks = books.filter((book) => {
     const matchesSearch =
@@ -90,15 +99,22 @@ export default function LibraryPage() {
     return matchesSearch && matchesGenre && matchesStatus;
   });
 
-  const truncate = (text: string, length: number) =>
-    text.length > length ? text.slice(0, length) + "..." : text;
-
   return (
     <div className="p-6 mx-10 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">📚 Minha Biblioteca</h1>
-        <Button onClick={() => router.push("/estante/add")}>Adicionar Livro</Button>
+        <h1 className="text-2xl font-bold">📖 Minha Biblioteca</h1>
+        <Button
+          onClick={() => router.push("/estante/add")}
+          variant="default"
+          className="sm:w-auto flex items-center justify-center gap-2 text-sm sm:text-base bg-secondary hover:bg-secondary/50 text-foreground"
+          aria-label="Adicionar um novo livro à biblioteca"
+          title="Adicionar novo livro"
+        >
+          <Plus className="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+          <span className="font-medium">Adicionar livro</span>
+        </Button>
       </div>
+
 
       {/* Filtros */}
       <div className="flex flex-col md:flex-row gap-4">
@@ -106,11 +122,11 @@ export default function LibraryPage() {
           placeholder="Buscar por título ou autor..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="md:w-1/3"
+          className="w-full md:w-1/3"
         />
 
         <Select onValueChange={setGenre} defaultValue="all">
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full md:w-52">
             <SelectValue placeholder="Filtrar por gênero" />
           </SelectTrigger>
           <SelectContent>
@@ -124,12 +140,12 @@ export default function LibraryPage() {
         </Select>
 
         <Select onValueChange={setStatus} defaultValue="all">
-          <SelectTrigger className="w-[200px]">
+          <SelectTrigger className="w-full md:w-52">
             <SelectValue placeholder="Filtrar por status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os status</SelectItem>
-            <SelectItem value="QUERO_LER">Quero Ler</SelectItem>
+            <SelectItem value="QUERO LER">Quero Ler</SelectItem>
             <SelectItem value="LENDO">Lendo</SelectItem>
             <SelectItem value="LIDO">Lido</SelectItem>
             <SelectItem value="PAUSADO">Pausado</SelectItem>
@@ -139,7 +155,7 @@ export default function LibraryPage() {
       </div>
 
       {/* Grid de livros */}
-      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full">
         {filteredBooks.map((book) => (
           <BookItem
             key={book.id}

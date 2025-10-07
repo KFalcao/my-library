@@ -14,7 +14,7 @@
 // }
 
 // export type BookStatus =
-//   | "QUERO_LER"
+//   | "QUERO LER"
 //   | "LENDO"
 //   | "LIDO"
 //   | "PAUSADO"
@@ -90,7 +90,7 @@
 //         rating: 4,
 //         synopsis: "Aventura na Terra Média.",
 //         cover: "",
-//         status: "QUERO_LER",
+//         status: "QUERO LER",
 //       },
 //       {
 //         id: "4",

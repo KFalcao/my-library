@@ -44,6 +44,10 @@ export default function EditBookClient({ id }: EditBookClientProps) {
           cover: bookData.cover || "",
           status: bookData.status || "QUERO LER",
           currentPage: bookData.currentPage || 0,
+          isbn: bookData.isbn || "",
+          notes: bookData.notes || "",
+          createdAt: bookData.createdAt || new Date(),
+          updatedAt: bookData.updatedAt || new Date(),
         });
         setGenres(genresData);
       } catch {
@@ -163,6 +167,40 @@ export default function EditBookClient({ id }: EditBookClientProps) {
             />
           </div>
           <div>
+            <label className="block text-sm font-medium mb-1">ISBN</label>
+            <Input type="text" value={book.isbn ?? ""} onChange={(e) => setBook({ ...book, isbn: String(e.target.value) })} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Notas</label>
+            <textarea
+              className="w-full border rounded-md p-2"
+              rows={3}
+              value={book.notes ?? ""}
+              onChange={(e) => setBook({ ...book, notes: e.target.value })}
+            />
+          </div>
+           <div>
+            <label className="block text-sm font-medium mb-1">
+              Criado em
+            </label>
+            <Input
+              type="date"
+              disabled
+              value={book.createdAt.toISOString().split("T")[0]}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Atualizado em
+            </label>
+            <Input
+              type="date"
+              disabled
+              value={book.updatedAt.toISOString().split("T")[0]}
+            />
+          </div>
+          <div>
             <label className="block text-sm font-medium mb-1">
               Status de leitura
             </label>
@@ -176,7 +214,7 @@ export default function EditBookClient({ id }: EditBookClientProps) {
                 <SelectValue placeholder="Selecione o status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="QUERO_LER">Quero Ler</SelectItem>
+                <SelectItem value="QUERO LER">Quero Ler</SelectItem>
                 <SelectItem value="LENDO">Lendo</SelectItem>
                 <SelectItem value="LIDO">Lido</SelectItem>
                 <SelectItem value="PAUSADO">Pausado</SelectItem>

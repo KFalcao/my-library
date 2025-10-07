@@ -27,4 +27,8 @@ export type Book = {
   cover: string;
   status: ReadingStatus;
   currentPage?: number;
+  isbn?: string;
+  notes?: string;
+  createdAt: Date;
+  updatedAt: Date;
 };

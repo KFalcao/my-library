@@ -1,13 +1,7 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
 import type { Book } from "@/app/types/book";
-import { Star, Trash } from "lucide-react";
+import { Edit, Eye, Star, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -22,8 +16,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { truncate } from "@/lib/utils";
-
 
 interface BookItemProps {
   book: Book;
@@ -36,85 +28,127 @@ export default function BookItem({
   onDelete,
   isLoading = false,
 }: BookItemProps) {
+  const [imageError, setImageError] = useState(false);
   const [hovered, setHovered] = useState(false);
   const router = useRouter();
 
-  function handleDelete(id: number): void {
-    onDelete(id);
-  }
+  const handleImageError = () => {
+    setImageError(true);
+  };
 
   return (
-    <Card key={book.id} className="shadow-lg hover:shadow-xl transition">
-      <CardHeader className="p-0">
-        <div className="relative group">
-          <img
-            src={book.cover || "/default-cover.png"}
-            alt={book.title}
-            className="w-full h-60 object-contain rounded-t-xl group-hover:brightness-25 transition"
-          />
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <button className="flex h-8 w-8 items-center justify-center rounded-full bg-background text-primary shadow-lg transition-all hover:bg-background hover:scale-110 hover:text-destructive">
-                  <Trash
-                    size={18}
-                    className="text-muted-foreground hover:text-destructive transition cursor-pointer"
-                  />
-                </button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>
-                    Are you sure you want to delete this item?
-                  </AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    your book and remove your data from our servers.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={() => onDelete(book.id)}
-                    disabled={isLoading}
-                  >
-                    Yes, I agree
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+    <div
+      className="group rounded-lg border border-secondary hover:border-muted shadow-sm hover:shadow-md transition-all duration-200 flex flex-col h-full overflow-hidden"
+      role="article"
+      aria-label={`Livro: ${book.title} por ${book.author}`}
+    >
+      <div className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 flex items-center justify-center">
+        {" "}
+        <img
+          src={imageError ? "/default-cover.png" : book.cover}
+          alt={`Capa do livro ${book.title}`}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          onError={handleImageError}
+          loading="lazy"
+        />
+      </div>
+
+      <div className="flex flex-col flex-1 p-2">
+        <div className="flex-1 min-h-0">
+          <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-foreground mb-1">
+            {book.title}
+          </h3>
+          <p className="text-xs text-gray-600 leading-tight line-clamp-1 mb-1">
+            {book.author.name}
+          </p>
+          <p className="text-xs text-gray-500 leading-tight line-clamp-1">
+            {book.year} • {book.genre.genre}
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between mt-2 pt-2 border-t border-muted">
+          <span className="text-xs font-medium px-1.5 py-0.5 rounded capitalize">
+            {book.status?.replace("_", " ") || "Não lido"}
+          </span>
+
+          <div
+            className="flex items-center gap-0.5"
+            role="img"
+            aria-label={`Avaliação: ${book.rating} estrelas de 5`}
+          >
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Star
+                key={i}
+                className={`h-3 w-3 ${
+                  i < (book.rating || 0)
+                    ? "text-yellow-500 fill-yellow-500"
+                    : "text-gray-300"
+                }`}
+              />
+            ))}
           </div>
         </div>
-      </CardHeader>
-      <CardContent className="p-4 space-y-2">
-        <h2 className="text-lg font-semibold">{book.title}</h2>
-        <p className="text-sm text-muted-foreground">{book.author?.name}</p>
-        <p className="text-xs text-muted-foreground">
-          {book.year} • {book.genre?.genre} • {book.status?.replace("_", " ")}
-        </p>
-        <p className="text-muted-foreground text-sm mt-2">
-          {truncate(book.synopsis || "Nenhuma sinopse cadastrada.", 100)}
-          </p>
 
-        {/* Avaliação por estrelas */}
-        <div className="flex">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Star
-              key={i}
-              className={`h-4 w-4 ${
-                i < (book.rating ?? 0)
-                  ? "text-yellow-500 fill-yellow-500"
-                  : "text-gray-300"
-              }`}
-            />
-          ))}
+        <div className="flex gap-1 mt-2 pt-2 border-t border-muted">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-xs h-7 px-2 min-w-0 flex-1"
+            onClick={() => router.push(`/estante/${book.id}`)}
+            aria-label={`Visualizar detalhes do livro ${book.title}`}
+            title="Visualizar"
+          >
+            <Eye size={12} aria-hidden="true" />
+          </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 flex-1 text-xs"
+            onClick={() => router.push(`/estante/${book.id}/edit`)}
+            aria-label={`Editar informações do livro ${book.title}`}
+            title="Editar livro"
+          >
+            <Edit size={12} aria-hidden="true" />
+          </Button>
+
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 flex-1 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                aria-label={`Excluir livro ${book.title}`}
+                title="Excluir livro"
+              >
+                <Trash size={12} aria-hidden="true" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="max-w-[95vw] rounded-lg sm:max-w-md">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-base">
+                  Excluir "{book.title}"?
+                </AlertDialogTitle>
+                <AlertDialogDescription className="text-sm">
+                  Esta ação não pode ser desfeita. O livro será permanentemente
+                  excluído da sua biblioteca.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                <AlertDialogCancel className="flex-1 h-9 text-sm">
+                  Cancelar
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => onDelete(book.id)}
+                  disabled={isLoading}
+                  className="flex-1 h-9 text-sm bg-red-600 hover:bg-red-700"
+                >
+                  {isLoading ? "Excluindo..." : "Excluir"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
-      </CardContent>
-       <CardFooter className="flex justify-between">
-              <Button size="sm" onClick={() => router.push(`/estante/${book.id}`)}>Visualizar</Button>
-              <Button variant="outline" size="sm" onClick={() => router.push(`/estante/${book.id}/edit`)}>Editar</Button>
-              <Button variant="destructive" size="sm" onClick={() => handleDelete(book.id)}>Excluir</Button>
-        </CardFooter>
-    </Card>
+      </div>
+    </div>
   );
 }

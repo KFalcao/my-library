@@ -20,6 +20,10 @@ export default function AddBookClient() {
     cover: "",
     status: "QUERO LER",
     currentPage: 0,
+    isbn: "",
+    notes: "",
+    createdAt: new Date(),
+    updatedAt: new Date(),
   });
   const [genres, setGenres] = useState<Genre[]>([]);
   const [loading, setLoading] = useState(false);
@@ -106,6 +110,40 @@ export default function AddBookClient() {
           <div>
             <label className="block text-sm font-medium mb-1">URL da capa</label>
             <Input value={book.cover ?? ""} onChange={(e) => setBook({ ...book, cover: e.target.value })} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">ISBN</label>
+            <Input type="text" value={book.isbn ?? ""} onChange={(e) => setBook({ ...book, isbn: String(e.target.value) })} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-1">Notas</label>
+            <textarea
+              className="w-full border rounded-md p-2"
+              rows={3}
+              value={book.notes ?? ""}
+              onChange={(e) => setBook({ ...book, notes: e.target.value })}
+            />
+          </div>
+           <div>
+            <label className="block text-sm font-medium mb-1">
+              Criado em
+            </label>
+            <Input
+              type="date"
+              disabled
+              value={book.createdAt.toISOString().split("T")[0]}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">
+              Atualizado em
+            </label>
+            <Input
+              type="date"
+              disabled
+              value={book.updatedAt.toISOString().split("T")[0]}
+            />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Status de leitura</label>
