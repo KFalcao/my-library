@@ -12,7 +12,7 @@ export default function BookDetailPage() {
 
   useEffect(() => {
     if (params.id) {
-      fetch(`https://mylibraryapi.up.railway.app/books/${params.id}`)
+      fetch(`books/${params.id}`)
         .then((res) => res.ok ? res.json() : null)
         .then((data) => {
           setBook(data);
@@ -22,13 +22,25 @@ export default function BookDetailPage() {
     }
   }, [params.id]);
 
-  const handleDelete = async () => {
-    if (!params.id) return;
-    await fetch(`https://mylibraryapi.up.railway.app/books/${params.id}`, {
-      method: "DELETE",
-    });
-    router.push("/estante");
-  };
+ const handleDelete = async () => {
+  if (!params.id) return;
+
+  const confirmDelete = window.confirm(
+    "Tem certeza que deseja excluir este livro? Esta ação não pode ser desfeita."
+  );
+
+  if (!confirmDelete) return;
+
+  const res = await fetch(`/route/${params.id}`, { method: "DELETE" });
+  const data = await res.json();
+
+  if (!data.success) {
+    alert(data.error || "Erro ao excluir livro");
+    return;
+  }
+
+  router.push("/estante");
+};
 
   if (loading) return <p className="p-6 text-center">Carregando livro...</p>;
   if (!book) return <p className="p-6 text-center">Livro não encontrado.</p>;
@@ -44,8 +56,8 @@ export default function BookDetailPage() {
         />
 
         <h1 className="text-3xl font-bold mb-2">{book.title}</h1>
-        <p className="text-lg text-gray-700 mb-1"><strong>Autor:</strong> {book.author}</p>
-        <p className="text-lg text-gray-700 mb-1"><strong>Gênero:</strong> {book.genre || "Não informado"}</p>
+        <p className="text-lg text-gray-700 mb-1"><strong>Autor:</strong> {String(book.author)}</p>
+        <p className="text-lg text-gray-700 mb-1"><strong>Gênero:</strong> {book.genre ? String(book.genre) : "Não informado"}</p>
         {book.year && <p className="text-lg text-gray-700 mb-1"><strong>Ano:</strong> {book.year}</p>}
         {book.pages && <p className="text-lg text-gray-700 mb-1"><strong>Páginas:</strong> {book.pages}</p>}
         {book.rating !== undefined && (

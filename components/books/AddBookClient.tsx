@@ -3,24 +3,25 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { Book, ReadingStatus } from "@/app/types/book";
+import type { Book, ReadingStatus, Genre, Author } from "@/app/types/book";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+
 
 export default function AddBookClient() {
   const [book, setBook] = useState<Omit<Book, "id">>({
     title: "",
-    author: "",
-    genre: "",
-    year: 0,
-    pages: 0,
-    rating: 0,
+    author: { id: "", name: "" },
+    genre: { id: "", genre: "" },
+    year: undefined,
+    pages: undefined,
+    rating: undefined,
     synopsis: "",
     cover: "",
     status: "QUERO LER",
     currentPage: 0,
   });
-  const [genres, setGenres] = useState<string[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -28,7 +29,7 @@ export default function AddBookClient() {
     // Busca os gêneros da API ao montar o componente
     fetch("/api/genres")
       .then((res) => res.json())
-      .then((data) => setGenres(data))
+      .then((data: Genre[]) => setGenres(data))
       .catch(() => setGenres([]));
   }, []);
 
@@ -61,17 +62,31 @@ export default function AddBookClient() {
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Autor *</label>
-            <Input required value={book.author} onChange={(e) => setBook({ ...book, author: e.target.value })} />
+            <Input required value={book.author.name}  onChange={(e) =>
+                setBook({
+                  ...book,
+                  author: { ...book.author, name: e.target.value },
+                })
+              }
+            />
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Gênero</label>
-            <Select value={book.genre} onValueChange={(val) => setBook({ ...book, genre: val })}>
+            <Select
+              value={book.genre.genre}
+              onValueChange={(val) =>
+                setBook({
+                  ...book,
+                  genre: { ...book.genre, genre: val },
+                })
+              }
+            >
               <SelectTrigger><SelectValue placeholder="Selecione o gênero" /></SelectTrigger>
               <SelectContent>
                 {genres.length === 0 ? (
-                  <SelectItem value="" disabled>Carregando...</SelectItem>
+                  <SelectItem value="Carregando" disabled>Carregando...</SelectItem>
                 ) : (
-                  genres.map((g) => <SelectItem key={g} value={g}>{g}</SelectItem>)
+                  genres.map((g) => <SelectItem key={g.id} value={g.genre}>{g.genre}</SelectItem>)
                 )}
               </SelectContent>
             </Select>

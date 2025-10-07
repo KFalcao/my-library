@@ -88,9 +88,9 @@ export default function BookItem({
       </CardHeader>
       <CardContent className="p-4 space-y-2">
         <h2 className="text-lg font-semibold">{book.title}</h2>
-        <p className="text-sm text-muted-foreground">{book.author}</p>
+        <p className="text-sm text-muted-foreground">{book.author?.name}</p>
         <p className="text-xs text-muted-foreground">
-          {book.year} • {book.genre} • {book.status?.replace("_", " ")}
+          {book.year} • {book.genre?.genre} • {book.status?.replace("_", " ")}
         </p>
         <p className="text-muted-foreground text-sm mt-2">
           {truncate(book.synopsis || "Nenhuma sinopse cadastrada.", 100)}
@@ -102,7 +102,7 @@ export default function BookItem({
             <Star
               key={i}
               className={`h-4 w-4 ${
-                i < book.rating
+                i < (book.rating ?? 0)
                   ? "text-yellow-500 fill-yellow-500"
                   : "text-gray-300"
               }`}

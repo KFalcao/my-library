@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Book } from "../types/book";
+import { Book, Genre } from "../types/book";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -15,8 +15,11 @@ import BookItem from "@/components/BookItem";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+
 export default function LibraryPage() {
+
   const [books, setBooks] = useState<Book[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
   const [search, setSearch] = useState("");
   const [genre, setGenre] = useState("all");
   const [status, setStatus] = useState("all");
@@ -31,14 +34,9 @@ export default function LibraryPage() {
       setLoading(true);
       setError(null);
 
-      const API_URL = process.env.NEXT_PUBLIC_API_URL
-      const result = await fetch(`${API_URL}/books`).then((res) => res.json());
+      const result = await fetch("/api/books").then((res) => res.json());
 
-      if (result.success) {
-        setBooks(result.data);
-      } else {
-        setError(result.error || "Failed to fetch books");
-      }
+      setBooks(result);
     } catch (err) {
       setError("Connection error");
     } finally {
@@ -46,26 +44,31 @@ export default function LibraryPage() {
     }
   };
 
+  const fetchGenres = async () => {
+    try {
+      const result = await fetch("/api/genres").then((res) => res.json());
+      setGenres(result);
+    } catch {
+      setGenres([]);
+    }
+  };
+
+
   useEffect(() => {
     fetchBooks();
+    fetchGenres();
   }, []);
 
   const deleteBook = async (id: number) => {
     try {
       setActionLoading(id);
 
-      const response = await fetch(`/api/books/${id}`, {// await fetch(`${API_URL}/books/${id}`
+      await fetch(`${"/api/books"}/${id}`, {
         method: "DELETE",
       });
 
-      const result = await response.json();
-
-      if (result.success) {
-        setBooks((prev) => prev.filter((b) => b.id !== id));
-        toast.warning("Book deleted successfully");
-      } else {
-        setError(result.error || "Failed to delete book");
-      }
+      setBooks((prev) => prev.filter((b) => b.id !== id));
+      toast.warning("Book deleted successfully");
     } catch (error) {
       setError("Connection error");
     } finally {
@@ -76,8 +79,13 @@ export default function LibraryPage() {
   const filteredBooks = books.filter((book) => {
     const matchesSearch =
       book.title.toLowerCase().includes(search.toLowerCase()) ||
-      book.author.toLowerCase().includes(search.toLowerCase());
-    const matchesGenre = genre === "all" || book.genre === genre;
+      (typeof book.author === "string"
+        ? (book.author as string).toLowerCase()
+        : (book.author && typeof (book.author as any).name === "string"
+            ? (book.author as any).name.toLowerCase()
+            : "")
+      ).includes(search.toLowerCase());
+    const matchesGenre = genre === "all" || (typeof book.genre === "string" ? book.genre === genre : book.genre.genre === genre);
     const matchesStatus = status === "all" || book.status === status;
     return matchesSearch && matchesGenre && matchesStatus;
   });
@@ -107,9 +115,11 @@ export default function LibraryPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos os gêneros</SelectItem>
-            {["Literatura Brasileira","Ficção Científica","Fantasia","História","Programação"].map((g) => (
-              <SelectItem key={g} value={g}>{g}</SelectItem>
-            ))}
+              {genres.map((g) => (
+                <SelectItem key={g.id} value={g.genre}>
+                  {g.genre}
+                </SelectItem>
+              ))}
           </SelectContent>
         </Select>
 
