@@ -30,7 +30,6 @@ export default function BookItem({
   isLoading = false,
 }: BookItemProps) {
   const [imageError, setImageError] = useState(false);
-  const [hovered, setHovered] = useState(false);
   const router = useRouter();
 
   const handleImageError = () => {
@@ -127,7 +126,7 @@ export default function BookItem({
             <AlertDialogContent className="max-w-[95vw] rounded-lg sm:max-w-md">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-base">
-                  Excluir "{book.title}"?
+                   Excluir &quot;{book.title}&quot;?
                 </AlertDialogTitle>
                 <AlertDialogDescription className="text-sm">
                   Esta ação não pode ser desfeita. O livro será permanentemente

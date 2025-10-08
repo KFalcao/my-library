@@ -17,7 +17,7 @@ import { Marquee } from "@/components/ui/marquee";
 export default function Dashboard() {
   const { stats, pagesRead, genreStats } = getDashboardStats();
 
-  const hasMetrics = stats.some((stat) => stat.value > 0) || pagesRead > 0;
+  const hasMetrics = stats.some((stat) => (stat.value ?? 0) > 0) || pagesRead > 0;
 
   const currentBook = booksData
     .getAll()
