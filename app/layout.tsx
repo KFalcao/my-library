@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
 import { Raleway } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "@/components/ui/theme-provider"
-import Navbar from "./components/Navbar";
-
+import { ThemeProvider } from "@/components/ui/theme-provider";
+import Navbar from "@/components/Navbar";
+import { type Metadata } from "next";
+import { ClerkProvider } from "@clerk/nextjs";
+import { ptBR } from "@clerk/localizations";
 
 const raleway = Raleway({
   variable: "--font-raleway",
@@ -24,12 +25,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${raleway.className} antialiased`}
-        suppressHydrationWarning
-      >
-         <ThemeProvider
+    <ClerkProvider localization={ptBR}>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${raleway.className} antialiased`}
+          suppressHydrationWarning
+        >
+          <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
@@ -39,7 +41,8 @@ export default function RootLayout({
             {children}
             <Toaster position="top-right" richColors />
           </ThemeProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
