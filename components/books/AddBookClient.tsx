@@ -3,8 +3,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import type { Book, ReadingStatus, Genre, Author } from "@/app/types/book";
+import type { Book, ReadingStatus, Genre } from "@/app/types/book";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 
 
@@ -104,6 +105,15 @@ export default function AddBookClient() {
             <Input type="number" value={book.pages ?? ""} onChange={(e) => setBook({ ...book, pages: Number(e.target.value) })} />
           </div>
           <div>
+            <label className="block text-sm font-medium mb-1">Sinopse</label>
+            <textarea
+              className="w-full border rounded-md p-2"
+              rows={3}
+              value={book.synopsis ?? ""}
+              onChange={(e) => setBook({ ...book, synopsis: e.target.value })}
+            />
+          </div>
+          <div>
             <label className="block text-sm font-medium mb-1">Avaliação (1-5)</label>
             <Input type="number" value={book.rating ?? ""} onChange={(e) => setBook({ ...book, rating: Number(e.target.value) })} />
           </div>
@@ -163,7 +173,7 @@ export default function AddBookClient() {
         {/* Preview da capa */}
         <div>
           <label className="block text-sm font-medium mb-1">Preview da Capa</label>
-          <img
+          <Image
             src={book.cover || "/default-cover.png"}
             alt="Preview da Capa"
             className="w-40 h-60 object-contain border rounded"

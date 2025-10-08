@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Book, Genre } from "../types/book";
+import { Book, Genre } from "@/app/types/book";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -85,19 +85,19 @@ export default function LibraryPage() {
   };
 
 
-  const filteredBooks = books.filter((book) => {
-    const matchesSearch =
-      book.title.toLowerCase().includes(search.toLowerCase()) ||
-      (typeof book.author === "string"
-        ? (book.author as string).toLowerCase()
-        : (book.author && typeof (book.author as any).name === "string"
-            ? (book.author as any).name.toLowerCase()
-            : "")
-      ).includes(search.toLowerCase());
-    const matchesGenre = genre === "all" || (typeof book.genre === "string" ? book.genre === genre : book.genre.genre === genre);
-    const matchesStatus = status === "all" || book.status === status;
-    return matchesSearch && matchesGenre && matchesStatus;
-  });
+  const filteredBooks = books.filter((book: Book) => {
+  const authorName = book.author?.name?.toLowerCase() || "";
+  const genreValue = book.genre?.genre || "";
+  
+  const matchesSearch =
+    book.title.toLowerCase().includes(search.toLowerCase()) ||
+    authorName.includes(search.toLowerCase());
+
+  const matchesGenre = genre === "all" || genreValue === genre;
+  const matchesStatus = status === "all" || book.status === status;
+  
+  return matchesSearch && matchesGenre && matchesStatus;
+});
 
   return (
     <div className="p-6 mx-10 space-y-6">
