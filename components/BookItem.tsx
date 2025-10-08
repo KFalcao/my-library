@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 
 interface BookItemProps {
   book: Book;
@@ -44,7 +43,7 @@ export default function BookItem({
     >
       <div className="relative w-full aspect-[3/4] overflow-hidden bg-gray-100 flex items-center justify-center">
         {" "}
-        <Image
+        <img
           src={imageError ? "/default-cover.png" : book.cover}
           alt={`Capa do livro ${book.title}`}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

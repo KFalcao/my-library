@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/select";
 import type { Book, ReadingStatus, Genre } from "@/app/types/book";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface EditBookClientProps {
@@ -230,7 +229,7 @@ export default function EditBookClient({ id }: EditBookClientProps) {
           <label className="block text-sm font-medium mb-1">
             Preview da Capa
           </label>
-          <Image
+          <img
             src={book.cover || "/default-cover.png"}
             alt="Preview da Capa"
             className="w-40 h-60 object-contain border rounded"

@@ -3,7 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Book } from "@/app/types/book";
-import Image from "next/image";
 
 export default function BookDetailPage() {
   const params = useParams();
@@ -49,10 +48,10 @@ export default function BookDetailPage() {
   return (
     <div className="max-w-3xl mx-auto p-6">
       <div className="border rounded-lg shadow-md p-4">
-        <Image
+        <img
           src={book.cover || "/default-cover.png"}
           alt={book.title}
-          className="w-full h-80 object-cover rounded-md mb-4"
+          className="object-cover rounded-md mb-4"
           onError={(e) => (e.currentTarget.src = "/default-cover.png")}
         />
 
